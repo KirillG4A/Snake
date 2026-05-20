@@ -17,6 +17,16 @@ function gameLoop() {
     snakeX += velocityX * gridSize;
     snakeY += velocityY * gridSize;
 
+    if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height) {
+        alert("Game Over!");
+
+        snakeX = 100;
+        snakeY = 100;
+        velocityX = 1;
+        velocityY = 0;
+        return;
+    }
+
     // Clear the board
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
