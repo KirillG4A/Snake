@@ -26,3 +26,24 @@ function gameLoop() {
 }
 
 setInterval(gameLoop, 100);
+
+window.addEventListener("keydown", changeDirection);
+
+function changeDirection(event) {
+    const keyPressed = event.key;
+
+    //assign key
+    if (keyPressed === "ArrowUp") {
+        velocityX = 0;
+        velocityY = -1;
+    } else if (keyPressed === "ArrowDown") {
+        velocityX = 0;
+        velocityY = 1;
+    } else if (keyPressed === "ArrowLeft") {
+        velocityX = -1;
+        velocityY = 0;
+    } else if (keyPressed === "ArrowRight") {
+        velocityX = 1;
+        velocityY = 0;
+    }
+}
