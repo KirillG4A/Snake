@@ -26,13 +26,26 @@ function gameLoop() {
 
     // 2. Check wall collisions (using the newHead's position)
     if (newHead.x < 0 || newHead.x >= canvas.width || newHead.y < 0 || newHead.y >= canvas.height) {
-        alert("Game Over!");
+        alert("Game Over! A wall has been hit!");
         // Reset game state
         snake = [{ x: 100, y: 100 }];
         velocityX = 1;
         velocityY = 0;
         spawnFood();
         return;
+    }
+
+    // 3. NEW: Check self-collision (Did the head hit the body?)
+    // We loop starting at index 1 because index 0 is the head itself!
+    for (let i = 1; i < snake.length; i++) {
+        if (newHead.x === snake[i].x && newHead.y === snake[i].y) {
+            alert("Game Over! You bit your own tail.");
+            snake = [{ x: 100, y: 100 }];
+        velocityX = 1;
+        velocityY = 0;
+        spawnFood();
+        return;
+        }
     }
 
     // 3. Add the new head to the front of the snake array
