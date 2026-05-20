@@ -7,6 +7,10 @@ const gridSize = 20;
 let snakeX = 100;
 let snakeY = 100;
 
+// adds fruits
+let foodX;
+let foodY;
+
 // 2. Tracks which direction the snake is moving 
 // (X: 1 means moving right, Y: 0 means not moving up/down)
 let velocityX = 1; 
@@ -27,14 +31,23 @@ function gameLoop() {
         return;
     }
 
+    if (snakeX === foodX && snakeY === foodY) {
+        spawnFood();
+    }
+
     // Clear the board
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // draw food
+    ctx.fillStyle = "red";
+    ctx.fillRect(foodX, foodY, gridSize, gridSize);
     
     // Draw the snake at its NEW position
     ctx.fillStyle = "green";
     ctx.fillRect(snakeX, snakeY, gridSize, gridSize);
 }
 
+spawnFood();
 setInterval(gameLoop, 100);
 
 window.addEventListener("keydown", changeDirection);
@@ -56,4 +69,9 @@ function changeDirection(event) {
         velocityX = 1;
         velocityY = 0;
     }
+}
+
+function spawnFood() {
+    foodX = Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize;
+    foodY = Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize;
 }
