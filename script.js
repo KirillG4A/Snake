@@ -79,14 +79,17 @@ function gameLoop() {
     ctx.fill();
     ctx.closePath();
 
-  // 8. Loop through the snake array and draw a flawless, connected ribbon
+  // 8. Loop through the snake array and draw a flawless, connected ribbon with eyes and a fading tail
     for (let i = 0; i < snake.length; i++) {
-        ctx.fillStyle = "#22c55e"; // Vibrant emerald green
-
         let x = snake[i].x;
         let y = snake[i].y;
-        
         let pad = 2; // Controls the thickness of the passing air gap
+
+        // --- DYNAMIC FADING COLOR ---
+        // Start at full opacity (1.0) and decrease it as we move down the body array.
+        // We set a minimum opacity of 0.4 so the tail tip doesn't become totally invisible.
+        let opacity = Math.max(0.4, 1 - (i * 0.05)); 
+        ctx.fillStyle = `rgba(34, 197, 94, ${opacity})`; // Modern vibrant emerald green with fade
 
         // Helper function to check if a truly connected neighbor is touching this segment
         const hasConnectedNeighbor = (nx, ny) => {
@@ -103,21 +106,53 @@ function gameLoop() {
         let neighborTop    = hasConnectedNeighbor(x, y - gridSize);
         let neighborBottom = hasConnectedNeighbor(x, y + gridSize);
 
-        // Calculate the boundaries of our green rectangle based on neighbors
-        // If a neighbor exists, pad is 0 (fuse). If no neighbor, pad is applied (gap).
+        // Calculate boundaries (pad = 0 if neighbor exists, pad = 2 if edge is exposed)
         let leftPad   = neighborLeft   ? 0 : pad;
         let rightPad  = neighborRight  ? 0 : pad;
         let topPad    = neighborTop    ? 0 : pad;
         let bottomPad = neighborBottom ? 0 : pad;
 
-        // Form the custom rectangle dimensions
         let drawX = x + leftPad;
         let drawY = y + topPad;
         let drawWidth = gridSize - leftPad - rightPad;
         let drawHeight = gridSize - topPad - bottomPad;
 
-        // Draw the perfectly tailored segment
+        // Draw the segment body
         ctx.fillRect(drawX, drawY, drawWidth, drawHeight);
+
+        // --- NEW: ADDING EYES TO THE HEAD ---
+        if (i === 0) {
+            ctx.fillStyle = "#ffffff"; // White for the eyes
+            let eyeSize = 3;           // Radius of the eyes
+            let offset = 5;            // Distance from the edges
+
+            let leftEyeX, leftEyeY, rightEyeX, rightEyeY;
+
+            // Calculate eye placement depending on which way the head is facing
+            if (velocityX === 1) { // Moving RIGHT
+                leftEyeX = x + gridSize - offset; leftEyeY = y + offset;
+                rightEyeX = x + gridSize - offset; rightEyeY = y + gridSize - offset;
+            } else if (velocityX === -1) { // Moving LEFT
+                leftEyeX = x + offset; leftEyeY = y + offset;
+                rightEyeX = x + offset; rightEyeY = y + gridSize - offset;
+            } else if (velocityY === -1) { // Moving UP
+                leftEyeX = x + offset; leftEyeY = y + offset;
+                rightEyeX = x + gridSize - offset; rightEyeY = y + offset;
+            } else if (velocityY === 1) { // Moving DOWN
+                leftEyeX = x + offset; leftEyeY = y + gridSize - offset;
+                rightEyeX = x + gridSize - offset; rightEyeY = y + gridSize - offset;
+            }
+
+            // Draw Left Eye
+            ctx.beginPath();
+            ctx.arc(leftEyeX, leftEyeY, eyeSize, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Right Eye
+            ctx.beginPath();
+            ctx.arc(rightEyeX, rightEyeY, eyeSize, 0, Math.PI * 2);
+            ctx.fill();
+        }
     }
 }
 
