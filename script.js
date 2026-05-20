@@ -129,23 +129,50 @@ window.addEventListener("keydown", changeDirection);
 function changeDirection(event) {
     const keyPressed = event.key;
 
-    //assign key
-    if (keyPressed === "ArrowUp") {
+    // Check if we are moving horizontally or vertically right now
+    const goingUp = (velocityY === -1);
+    const goingDown = (velocityY === 1);
+    const goingLeft = (velocityX === -1);
+    const goingRight = (velocityX === 1);
+
+    // Only allow pressing UP if we aren't currently going DOWN
+    if (keyPressed === "ArrowUp" && !goingDown) {
         velocityX = 0;
         velocityY = -1;
-    } else if (keyPressed === "ArrowDown") {
+    } 
+    // Only allow pressing DOWN if we aren't currently going UP
+    else if (keyPressed === "ArrowDown" && !goingUp) {
         velocityX = 0;
         velocityY = 1;
-    } else if (keyPressed === "ArrowLeft") {
+    } 
+    // Only allow pressing LEFT if we aren't currently going RIGHT
+    else if (keyPressed === "ArrowLeft" && !goingRight) {
         velocityX = -1;
         velocityY = 0;
-    } else if (keyPressed === "ArrowRight") {
+    } 
+    // Only allow pressing RIGHT if we aren't currently going LEFT
+    else if (keyPressed === "ArrowRight" && !goingLeft) {
         velocityX = 1;
         velocityY = 0;
     }
 }
 
 function spawnFood() {
-    foodX = Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize;
-    foodY = Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize;
+    let foodOnSnake = true;
+
+    // Keep running this loop as long as the food is spawning on top of the snake
+    while (foodOnSnake) {
+        // 1. Pick a random grid position
+        foodX = Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize;
+        foodY = Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize;
+
+        // 2. Check if this random spot matches ANY part of the snake's body
+        foodOnSnake = false; // Assume it's a good spot first
+        for (let i = 0; i < snake.length; i++) {
+            if (foodX === snake[i].x && foodY === snake[i].y) {
+                foodOnSnake = true; // Uh oh, it's on the snake! Break out and try again.
+                break; 
+            }
+        }
+    }
 }
