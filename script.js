@@ -70,63 +70,54 @@ function gameLoop() {
     // 5. Clear the board
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // 6. Draw the food
-    ctx.fillStyle = "red";
-    ctx.fillRect(foodX, foodY, gridSize, gridSize);
+    // 7. Draw the food as a sleek glowing circle
+    ctx.beginPath();
+    let radius = gridSize / 2;
+    // Math.PI * 2 draws a full 360-degree circle
+    ctx.arc(foodX + radius, foodY + radius, radius - 2, 0, Math.PI * 2);
+    ctx.fillStyle = "#ef4444"; // Sleek crimson red
+    ctx.fill();
+    ctx.closePath();
 
-  // 7. Loop through the snake array and draw contextual borders
+  // 8. Loop through the snake array and draw a flawless, connected ribbon
     for (let i = 0; i < snake.length; i++) {
-        // Draw the base green square
-        ctx.fillStyle = "green";
-        ctx.fillRect(snake[i].x, snake[i].y, gridSize, gridSize);
+        ctx.fillStyle = "#22c55e"; // Vibrant emerald green
 
-        // Define our border properties
-        ctx.strokeStyle = "#00000"; // Background gray mask color
-        ctx.lineWidth = 2;            // 2 pixels gives a clear side gap
+        let x = snake[i].x;
+        let y = snake[i].y;
+        
+        let pad = 2; // Controls the thickness of the passing air gap
 
-        // Helper function to check if a true connected neighbor is at a specific coordinate
-        // It checks if a segment exists there AND if it's adjacent in the array (i-1 or i+1)
-        const hasConnectedNeighbor = (x, y) => {
+        // Helper function to check if a truly connected neighbor is touching this segment
+        const hasConnectedNeighbor = (nx, ny) => {
             return snake.some((seg, index) => 
-                seg.x === x && 
-                seg.y === y && 
+                seg.x === nx && 
+                seg.y === ny && 
                 Math.abs(index - i) === 1
             );
         };
 
-        // --- Contextual Checks using our helper ---
+        // Check all 4 directions around the current segment
+        let neighborLeft   = hasConnectedNeighbor(x - gridSize, y);
+        let neighborRight  = hasConnectedNeighbor(x + gridSize, y);
+        let neighborTop    = hasConnectedNeighbor(x, y - gridSize);
+        let neighborBottom = hasConnectedNeighbor(x, y + gridSize);
 
-        // Is the LEFT edge exposed?
-        if (!hasConnectedNeighbor(snake[i].x - gridSize, snake[i].y)) {
-            ctx.beginPath();
-            ctx.moveTo(snake[i].x, snake[i].y);
-            ctx.lineTo(snake[i].x, snake[i].y + gridSize);
-            ctx.stroke();
-        }
+        // Calculate the boundaries of our green rectangle based on neighbors
+        // If a neighbor exists, pad is 0 (fuse). If no neighbor, pad is applied (gap).
+        let leftPad   = neighborLeft   ? 0 : pad;
+        let rightPad  = neighborRight  ? 0 : pad;
+        let topPad    = neighborTop    ? 0 : pad;
+        let bottomPad = neighborBottom ? 0 : pad;
 
-        // Is the RIGHT edge exposed?
-        if (!hasConnectedNeighbor(snake[i].x + gridSize, snake[i].y)) {
-            ctx.beginPath();
-            ctx.moveTo(snake[i].x + gridSize, snake[i].y);
-            ctx.lineTo(snake[i].x + gridSize, snake[i].y + gridSize);
-            ctx.stroke();
-        }
+        // Form the custom rectangle dimensions
+        let drawX = x + leftPad;
+        let drawY = y + topPad;
+        let drawWidth = gridSize - leftPad - rightPad;
+        let drawHeight = gridSize - topPad - bottomPad;
 
-        // Is the TOP edge exposed?
-        if (!hasConnectedNeighbor(snake[i].x, snake[i].y - gridSize)) {
-            ctx.beginPath();
-            ctx.moveTo(snake[i].x, snake[i].y);
-            ctx.lineTo(snake[i].x + gridSize, snake[i].y);
-            ctx.stroke();
-        }
-
-        // Is the BOTTOM edge exposed?
-        if (!hasConnectedNeighbor(snake[i].x, snake[i].y + gridSize)) {
-            ctx.beginPath();
-            ctx.moveTo(snake[i].x, snake[i].y + gridSize);
-            ctx.lineTo(snake[i].x + gridSize, snake[i].y + gridSize);
-            ctx.stroke();
-        }
+        // Draw the perfectly tailored segment
+        ctx.fillRect(drawX, drawY, drawWidth, drawHeight);
     }
 }
 
