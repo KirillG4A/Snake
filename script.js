@@ -8,6 +8,9 @@ let snake = [
     { x: 100, y: 100}
 ];
 
+let score = 0;
+const scoreDisplay = document.getElementById("score");
+
 // adds fruits
 let foodX;
 let foodY;
@@ -32,6 +35,8 @@ function gameLoop() {
         velocityX = 1;
         velocityY = 0;
         spawnFood();
+        score = 0;
+        scoreDisplay.innerText = score;
         return;
     }
 
@@ -42,9 +47,11 @@ function gameLoop() {
             alert("Game Over! You bit your own tail.");
             snake = [{ x: 100, y: 100 }];
         velocityX = 1;
-        velocityY = 0;
-        spawnFood();
-        return;
+            velocityY = 0;
+            spawnFood();
+            score = 0;
+            scoreDisplay.innerText = score;
+            return;
         }
     }
 
@@ -53,9 +60,11 @@ function gameLoop() {
 
     // 4. Check if the snake ate the food
     if (newHead.x === foodX && newHead.y === foodY) {
-        spawnFood(); // Spawns new food, and we DO NOT pop the tail (snake grows!)
+        score++; // Increase score by 1
+        scoreDisplay.innerText = score; // Update the text on the website
+        spawnFood();
     } else {
-        snake.pop(); // Remove the last tail segment (snake stays same size)
+        snake.pop();
     }
 
     // 5. Clear the board

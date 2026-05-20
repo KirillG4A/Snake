@@ -5,6 +5,25 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Adds a nice gap between score and board */
+}
+
+#scoreBox {
+    color: #fff;
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    
+    user-select: none;
+    -webkit-user-select: none; 
+    pointer-events: none;      
 }
 
 #gameBoard {
